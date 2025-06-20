@@ -236,11 +236,23 @@ class CheckIn {
 
   async run() {
     const juejin = new JuejinHelper();
-    try {
-      await juejin.login(this.cookie);
-    } catch (e) {
-      console.error(e.message);
-      throw new Error("登录失败, 请尝试更新Cookies!");
+    // try {
+    //   await juejin.login(this.cookie);
+    // } catch (e) {
+    //   console.error(e.message);
+    //   throw new Error("登录失败, 请尝试更新Cookies!");
+    // }
+    for (let i = 0; i < 3; i++) {
+      try {
+        await juejin.login(this.cookie);
+        break;
+      } catch (e) {
+        if (i === 2) {
+          console.error(e.message);
+          throw new Error("登录失败, 请尝试更新Cookies!");
+        }
+        await new Promise(r => setTimeout(r, 1000));
+      }
     }
 
     this.username = juejin.getUser().user_name;
